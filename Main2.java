@@ -35,6 +35,67 @@ import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.List;
 
+class Drag {
+    double mouseAnchorX;
+    double mouseAnchorY;
+    double translateAnchorX;
+    double translateAnchorY;
+}
+
+class GroupGestures {
+
+    private static final double MAX_SCALE = 10.0d;
+    private static final double MIN_SCALE = .1d;
+
+    private Drag groupDrag = new Drag();
+
+    Group group;
+
+    public GroupGestures(Group group) {
+        this.group = group;
+    }
+
+    public EventHandler<MouseEvent> getOnMousePressedEventHandler() {
+        return onMousePressedEventHandler;
+    }
+
+    public EventHandler<MouseEvent> getOnMouseDraggedEventHandler() {
+        return onMouseDraggedEventHandler;
+    }
+
+    private EventHandler<MouseEvent> onMousePressedEventHandler = new EventHandler<MouseEvent>() {
+
+        public void handle(MouseEvent event) {
+
+            // right mouse button => panning
+            if (!event.isSecondaryButtonDown())
+                return;
+
+            groupDrag.mouseAnchorX = event.getSceneX();
+            groupDrag.mouseAnchorY = event.getSceneY();
+
+            groupDrag.translateAnchorX = group.getTranslateX();
+            groupDrag.translateAnchorY = group.getTranslateY();
+
+        }
+
+    };
+
+    private EventHandler<MouseEvent> onMouseDraggedEventHandler = new EventHandler<MouseEvent>() {
+        public void handle(MouseEvent event) {
+
+            // right mouse button => panning
+            if (!event.isSecondaryButtonDown())
+                return;
+
+            group.setTranslateX(groupDrag.translateAnchorX + event.getSceneX() - groupDrag.mouseAnchorX);
+            group.setTranslateY(groupDrag.translateAnchorY + event.getSceneY() - groupDrag.mouseAnchorY);
+
+            event.consume();
+        }
+    };
+}
+
 public class Main2 extends Application {
 
     public static final double Width = 500;
@@ -74,6 +135,16 @@ public class Main2 extends Application {
     List sphereList = new ArrayList();
     List cylinderList = new ArrayList();
     List lineList = new ArrayList();
+    List lineSin = new ArrayList();
+    static int sinCount = 0;
+
+    TextField textfieldA = new TextField();
+    TextField textfieldB = new TextField();
+
+    Circle[] arrCircle = new Circle[100];
+    static int circleCount = 0;
+    CubicCurve[] arrCubicCurve = new CubicCurve[100];
+    static int cubiccurveCount = 0;
 
     public void start(Stage stage){
 
@@ -84,8 +155,9 @@ public class Main2 extends Application {
 
         Scene scene = new Scene(group, Width, Height);
 
-
-
+        GroupGestures groupGestures = new GroupGestures(group2);
+        scene.addEventFilter(MouseEvent.MOUSE_PRESSED, groupGestures.getOnMousePressedEventHandler());
+        scene.addEventFilter(MouseEvent.MOUSE_DRAGGED, groupGestures.getOnMouseDraggedEventHandler());
 
         GenTextFieldA(group, 500,10);
         GenRect(group,800,200,15,50);
@@ -105,9 +177,26 @@ public class Main2 extends Application {
 
     }//start
 
+    public void mathSin(double x1, double x2, double inc){
+        ArrayList<Double> domain = new ArrayList<>();
+        ArrayList<Double> range = new ArrayList<>();
+        if (x1 >= x2)
+            textfieldB.setText("Not A Correct Domain");
+        else
+        {
+            while(x1 < x2){
+                domain.add(x1);
+                range.add(Math.sin(x1)*100);
+                x1 = x1+inc;
+            }
+            for(int i = 0; i< domain.size(); i+=2){
+                Line line = new Line(domain.get(i),range.get(i),domain.get(i+1),range.get(i+1));
+                group2.getChildren().add(line);
+            }
+        }
+    }
+
     public void GenTextFieldA(Group group, double x, double y){
-        TextField textfieldA = new TextField();
-        TextField textfieldB = new TextField();
         group.getChildren().addAll(textfieldA,textfieldB);
         textfieldA.setLayoutX(x);
         textfieldA.setLayoutY(y);
@@ -142,6 +231,18 @@ public class Main2 extends Application {
                 {
                     textfieldB.setText("remove,object,array position or remove,axis");
                 }
+                else if(strFieldA.toLowerCase().equals("sin"))
+                {
+                    textfieldB.setText("sin,start x, end x, increment");
+                }
+                else if(strFieldA.toLowerCase().equals("circle"))
+                {
+                    textfieldB.setText("circle, radius, x, y");
+                }
+                else if(strFieldA.toLowerCase().equals("cubiccurve"))
+                {
+                    textfieldB.setText("cubiccurve, start x, start y, control x1, control y1, control x2, control y2, end x, end y");
+                }
                 else if(strFieldA.contains(","))
                 {
                     String parts[] = strFieldA.split(",");
@@ -158,6 +259,15 @@ public class Main2 extends Application {
                     }
                     else if(parts[0].toLowerCase().equals("line")  && parts.length ==5) {GenLine(Double.parseDouble(parts[1]), Double.parseDouble(parts[2]), Double.parseDouble(parts[3]),Double.parseDouble(parts[4]));
                         textfieldB.setText("GenLine(" + parts[1] + "," + parts[2] + "," + parts[3] + "," + parts[4]+")");
+                    }
+                    else if(parts[0].toLowerCase().equals("sin")  && parts.length ==4) {mathSin(1,2,.1);
+                        textfieldB.setText("mathSin(" + parts[1] + "," + parts[2] + "," + parts[3] + ")");
+                    }
+                    else if(parts[0].toLowerCase().equals("circle")  && parts.length ==4) {GenCircle(Integer.parseInt(parts[1]),Integer.parseInt(parts[2]),Integer.parseInt(parts[3]));
+                        textfieldB.setText("GenCircle(" + parts[1] + "," + parts[2] + "," + parts[3] + ")");
+                    }
+                    else if(parts[0].toLowerCase().equals("cubiccurve")  && parts.length ==9) {GenCubicCurve(Integer.parseInt(parts[1]),Integer.parseInt(parts[2]),Integer.parseInt(parts[3]),Integer.parseInt(parts[4]),Integer.parseInt(parts[5]),Integer.parseInt(parts[6]),Integer.parseInt(parts[7]),Integer.parseInt(parts[8]));
+                        textfieldB.setText("GenCubicCurve(" + parts[1] + "," + parts[2] + "," + parts[3] + parts[4]+","+parts[5]+","+parts[6]+","+parts[7]+","+parts[8]+")");
                     }
                     else if(parts[0].toLowerCase().equals("remove")){
                         if(parts[1].toLowerCase().equals("box")){
@@ -185,6 +295,33 @@ public class Main2 extends Application {
             }
         };
         textfieldA.setOnAction(eventA);
+    }
+
+    public void GenCubicCurve(int startx, int starty, int cx1, int cy1, int cx2, int cy2, int endx, int endy){
+        arrCubicCurve[cubiccurveCount] = new CubicCurve();
+        arrCubicCurve[cubiccurveCount].setStartX(startx);
+        arrCubicCurve[cubiccurveCount].setStartY(starty);
+        arrCubicCurve[cubiccurveCount].setControlX1(cx1);
+        arrCubicCurve[cubiccurveCount].setControlY1(cy1);
+        arrCubicCurve[cubiccurveCount].setControlX2(cx2);
+        arrCubicCurve[cubiccurveCount].setControlY2(cy2);
+        arrCubicCurve[cubiccurveCount].setEndX(endx);
+        arrCubicCurve[cubiccurveCount].setEndY(endy);
+        arrCubicCurve[cubiccurveCount].setFill(Color.TRANSPARENT);
+        arrCubicCurve[cubiccurveCount].setStroke(Color.BLACK);
+        group2.getChildren().add(arrCubicCurve[cubiccurveCount]);
+        ++cubiccurveCount;
+    }
+
+    public void GenCircle(int radius, int x, int y){
+        arrCircle[circleCount] = new Circle();
+        arrCircle[circleCount].setRadius(radius);
+        arrCircle[circleCount].setLayoutX(x);
+        arrCircle[circleCount].setLayoutY(y);
+        arrCircle[circleCount].setFill(Color.TRANSPARENT);
+        arrCircle[circleCount].setStroke(Color.BLACK);
+        group2.getChildren().add(arrCircle[circleCount]);
+        ++circleCount;
     }
 
     public void GenRect(Group group, int height, int width, int x, int y){
