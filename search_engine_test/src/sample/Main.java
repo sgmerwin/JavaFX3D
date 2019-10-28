@@ -35,10 +35,24 @@ import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This was built in IntellJ
+ * JavaFX sdk 13 was added to the compiler and to the VM.
+ */
+
 public class Main extends Application {
 
     public static final double Width = 500;
     public static final double Height = 500;
+
+    /**
+     * group is the background.
+     * group2 has the mouse events and the node commands
+     * and sits on top of group.
+     * The width and height are an arbitrary reference.
+     *
+     */
+
     public static Group group = new Group();
     public static Group group2 = new Group();
     Camera camera = new PerspectiveCamera();
@@ -49,7 +63,7 @@ public class Main extends Application {
     final DoubleProperty angleY = new SimpleDoubleProperty(0);
 
     public void start(Stage stage){
-        stage.setTitle("Testing Method Calls");
+        stage.setTitle("JavaFX Commands");
         group.getChildren().add(group2);
         group2.setLayoutX(700);
         group2.setLayoutY(300);
@@ -60,11 +74,32 @@ public class Main extends Application {
         scene.addEventFilter(MouseEvent.MOUSE_PRESSED, groupGestures.getOnMousePressedEventHandler());
         scene.addEventFilter(MouseEvent.MOUSE_DRAGGED, groupGestures.getOnMouseDraggedEventHandler());
 
-        GenTextFieldA(group, 500,10);
+        /**
+         * GenTextFieldA builds the 2 text field nodes on the background group
+         * and sets the default event with the return key.
+         * GenRect and GenText build nodes on the background group.
+         */
+
+        GenTextFieldA(500,10);
         Funct.GenRect(800,220,15,50);
         Funct.GenText("Object List",Funct.objectx+35,Funct.objecty);
+
+        /**
+         * line_0 and line_1 will be the x and y axes.
+         */
+
         Funct.lineM(0,-400,0,400);
         Funct.lineM(-400,0,400,0);
+
+        /**
+         * These translate Property calls puts the nodes in
+         * reference to (0, 0, 0).
+         * The initMouseControl puts the left click roll and
+         * the scroll on group 2. There are no mouse events on
+         * the background group.
+         * The Drag and GroupGestures classes handle the right click
+         * panning for group 2.
+         */
 
         group2.translateXProperty().set(Width/2);
         group2.translateYProperty().set(Height/2);
@@ -81,7 +116,7 @@ public class Main extends Application {
     static TextField textfieldA = new TextField();
     static TextField textfieldB = new TextField();
 
-    public void GenTextFieldA(Group group, double x, double y){
+    public void GenTextFieldA(double x, double y){
         group.getChildren().addAll(textfieldA,textfieldB);
         textfieldA.setLayoutX(x);
         textfieldA.setLayoutY(y);
@@ -127,14 +162,17 @@ public class Main extends Application {
         stage.addEventHandler(ScrollEvent.SCROLL, event -> {double delta = event.getDeltaY();
             group.translateZProperty().set(group.getTranslateZ() + delta);
         });
-    }
+    }//mousecontrol
+
+    /**
+     * In the main method launch args has to be last.
+     * Anything after launch args will not run.
+     * makeRunAll builds the node command library.
+     */
 
     public static void main(String[] args) {
         Funct.makeRunAll();
         launch(args);
-
-
-
-    }
-}
+    }//main
+}//class
 
