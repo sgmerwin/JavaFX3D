@@ -1,11 +1,15 @@
 package sample;
 
+import javafx.animation.Animation;
 import javafx.animation.TranslateTransition;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Transform;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -45,8 +49,10 @@ public class Funct {
         makeRun(rectangle,"rectangle","rectangle, int height, int width, int x, int y","Rectangle 2D from java fx");
         makeRun(remove,"remove","remove,String object, int array position","removes object from the group");
         makeRun(putBack,"putback","putback,String object, int array position","puts back object from the group's history");
-        makeRun(transition,"transition","Object type, array position, int sec, int x, int y, int z","Animation for node objects");
-
+        makeRun(transition,"transition","Object type, array position, int sec, int x, int y, int z, boolean for animation cycle","Animation for node objects");
+        makeRun(transitionStop,"transitionstop","transitionstop, array position","stops the animation at the given array position");
+        makeRun(textdisplay,"textdisplay","textdisplay, String text displayed, int x , int y, String font type, int font size","Displays text");
+        makeRun(rotate,"rotate","rotate, int angle, int x, int y, int z, String axis, String name, int pos","Rotate the given object");
     }//method
 
     static void decision(){
@@ -74,7 +80,20 @@ public class Funct {
         else{
             String[] parts = strFieldA.split(",");
             String name = parts[0].replace(" ","").toLowerCase();
-            if(!runs.contains(name))
+            if(name.equals("textdisplay")){
+                int i = runs.indexOf(name);
+                Function funct = (Function) runs.get(i+3);
+                try {
+                    String[] editParts = new String[parts.length];
+                    for (int k = 0; k < parts.length; k++) {
+                        editParts[k] = parts[k].replace(" ","");
+                    }
+                    funct.apply(editParts);
+                } catch (Exception e) {
+                    System.out.println("Function Call Failed");
+                }
+            }
+            else if(!runs.contains(name))
                 Main.textfieldB.setText("Not A Command");
             else{
                 int i = runs.indexOf(name);
@@ -109,6 +128,16 @@ public class Funct {
         arrNodes.add(arrSphere);
         arrNodes.add("cylinder");
         arrNodes.add(arrCyl);
+        arrNodes.add("transition");
+        arrNodes.add(arrTrans);
+        arrNodes.add("cubiccurve");
+        arrNodes.add(arrCubicCurve);
+        arrNodes.add("transitionstop");
+        arrNodes.add(arrTransStop);
+        arrNodes.add("textdisplay");
+        arrNodes.add(arrTextDisplay);
+        arrNodes.add("rotate");
+        arrNodes.add(arrRotate);
     }
 
     static ArrayList<CubicCurve> arrCubicCurve = new ArrayList<>();
@@ -398,6 +427,7 @@ public class Funct {
         arrRectangle.get(rectangleCount).setLayoutY(y);
         arrRectangle.get(rectangleCount).setFill(Color.TRANSPARENT);
         arrRectangle.get(rectangleCount).setStroke(Color.BLACK);
+        System.out.println(arrRectangle.get(rectangleCount).getClass());
         Main.group2.getChildren().add(arrRectangle.get(rectangleCount));
         arrString.add("Rectangle_"+rectangleCount);
         GenText("Rectangle_"+rectangleCount+" ("+x+" ,"+y+")",objectx,objecty+25+strCount*20);
@@ -429,9 +459,17 @@ public class Funct {
             Main.textfieldB.setText("Not A Command");
             return false;
         }
+        else if(!arrNodes.contains(str[1])){
+            Main.textfieldB.setText("Node not in List");
+            return false;
+        }
         else{
             try {
-                removeM(str[1],Integer.parseInt(str[2]));
+                int i = arrNodes.indexOf(str[1]);
+                int j = Integer.parseInt(str[2]);
+                List nodes = (ArrayList) arrNodes.get(i+1);
+                Object node = nodes.get(j);
+                removeM(str[1],j,node);
             } catch (NumberFormatException e) {
                 Main.textfieldB.setText("Not A Command");
                 return false;
@@ -440,39 +478,10 @@ public class Funct {
         }
     };//function
 
-    static void removeM(String str, int i){
+    static void removeM(String name, int i, Object node){
         try {
-            if(str.equals("box") && i < boxCount) {
-                Main.group2.getChildren().remove(arrBox.get(i));
-                Main.textfieldB.setText("remove, box, " + i);
-            }
-            else if(str.equals("cylinder") && i < cylinderCount) {
-                Main.group2.getChildren().remove(arrCyl.get(i));
-                Main.textfieldB.setText("remove, cylinder, " + i);
-            }
-            else if(str.equals("sphere") && i < sphereCount) {
-                Main.group2.getChildren().remove(arrSphere.get(i));
-                Main.textfieldB.setText("remove, sphere, " + i);
-            }
-            else if(str.equals("rectangle") && i < rectangleCount) {
-                Main.group2.getChildren().remove(arrRectangle.get(i));
-                Main.textfieldB.setText("remove, rectangle, " + i);
-            }
-            else if(str.equals("line") && i < lineCount) {
-                Main.group2.getChildren().remove(arrLine.get(i));
-                Main.textfieldB.setText("remove, line, " + i);
-            }
-            else if(str.equals("cubiccurve") && i < cubicCurveCount) {
-                Main.group2.getChildren().remove(arrCubicCurve.get(i));
-                Main.textfieldB.setText("remove, cubiccurve, " + i);
-            }
-            else if(str.equals("circle") && i < circleCount) {
-                Main.group2.getChildren().remove(arrCircle.get(i));
-                Main.textfieldB.setText("remove, circle, " + i);
-            }
-            else{
-                Main.textfieldB.setText("Ran the remove function but the object did not exist");
-            }
+            Main.group2.getChildren().remove((Node) node);
+            Main.textfieldB.setText("remove, "+name+"_" + i);
         } catch (Exception e) {
             Main.textfieldB.setText("Ran the remove function but the object did not exist");
         }
@@ -483,9 +492,17 @@ public class Funct {
             Main.textfieldB.setText("Not A Command");
             return false;
         }
+        else if(!arrNodes.contains(str[1])){
+            Main.textfieldB.setText("Node not in List");
+            return false;
+        }
         else{
             try {
-                putBackM(str[1],Integer.parseInt(str[2]));
+                int i = arrNodes.indexOf(str[1]);
+                int j = Integer.parseInt(str[2]);
+                List nodes = (ArrayList) arrNodes.get(i+1);
+                Object node = nodes.get(j);
+                putBackM(str[1],j,node);
             } catch (NumberFormatException e) {
                 Main.textfieldB.setText("Not A Command");
                 return false;
@@ -494,56 +511,31 @@ public class Funct {
         }
     };//function
 
-    static void putBackM(String str, int i){
+    static void putBackM(String name, int i, Object node){
         try {
-            if(str.equals("box") && i < boxCount) {
-                Main.group2.getChildren().add(arrBox.get(i));
-                Main.textfieldB.setText("add, box, " + i);
-            }
-            else if(str.equals("cylinder") && i < cylinderCount) {
-                Main.group2.getChildren().add(arrCyl.get(i));
-                Main.textfieldB.setText("add, cylinder, " + i);
-            }
-            else if(str.equals("sphere") && i < sphereCount) {
-                Main.group2.getChildren().add(arrSphere.get(i));
-                Main.textfieldB.setText("add, sphere, " + i);
-            }
-            else if(str.equals("rectangle") && i < rectangleCount) {
-                Main.group2.getChildren().add(arrRectangle.get(i));
-                Main.textfieldB.setText("add, rectangle, " + i);
-            }
-            else if(str.equals("line") && i < lineCount) {
-                Main.group2.getChildren().add(arrLine.get(i));
-                Main.textfieldB.setText("add, line, " + i);
-            }
-            else if(str.equals("cubiccurve") && i < cubicCurveCount) {
-                Main.group2.getChildren().add(arrCubicCurve.get(i));
-                Main.textfieldB.setText("add, cubiccurve, " + i);
-            }
-            else if(str.equals("circle") && i < circleCount) {
-                Main.group2.getChildren().add(arrCircle.get(i));
-                Main.textfieldB.setText("add, circle, " + i);
-            }
-            else{
-                Main.textfieldB.setText("Ran the putBack function but the object did not exist");
-            }
+            Main.group2.getChildren().add((Node) node);
+            Main.textfieldB.setText("add, "+name+"_" + i);
         } catch (Exception e) {
             Main.textfieldB.setText("Ran the putBack function but the object did not exist");
         }
     }//method
 
-    static ArrayList<TranslateTransition> trans = new ArrayList<>();
+    static ArrayList<TranslateTransition> arrTrans = new ArrayList<>();
     static int transCount = 0;
     static List transitionList = new ArrayList();
 
-    static void transM(int sec, int x, int y, int z, Object node){
-        trans.add(new TranslateTransition());
-        trans.get(transCount).setDuration(Duration.seconds(sec));
-        trans.get(transCount).setToX(x);
-        trans.get(transCount).setToY(y);
-        trans.get(transCount).setToZ(z);
-        trans.get(transCount).setNode((Node) node);
-        trans.get(transCount).play();
+    static void transM(int sec, int x, int y, int z, Object node, boolean cycle){
+        arrTrans.add(new TranslateTransition());
+        arrTrans.get(transCount).setDuration(Duration.seconds(sec));
+        arrTrans.get(transCount).setToX(x);
+        arrTrans.get(transCount).setToY(y);
+        arrTrans.get(transCount).setToZ(z);
+        if (cycle){
+            arrTrans.get(transCount).setAutoReverse(true);
+            arrTrans.get(transCount).setCycleCount(Animation.INDEFINITE);
+        }
+        arrTrans.get(transCount).setNode((Node) node);
+        arrTrans.get(transCount).play();
         arrString.add("transition_"+transCount);
         GenText("Transition_"+transCount+" ("+x+" ,"+y+")",objectx,objecty+25+strCount*20);
         transitionList.add("Transition_"+transCount);
@@ -554,7 +546,7 @@ public class Funct {
     }//method
 
     static Function<String[], Boolean> transition = (String[] str) ->{
-        if(!(str.length == 7)) {
+        if(!(str.length == 8)) {
             Main.textfieldB.setText("Not A Command");
             return false;
         }
@@ -566,9 +558,12 @@ public class Funct {
             try {
                 int i = arrNodes.indexOf(str[1]);
                 int j = Integer.parseInt(str[2]);
+                boolean cycle = false;
                 List nodes = (ArrayList) arrNodes.get(i+1);
                 Object node = nodes.get(j);
-                transM(Integer.parseInt(str[3]),Integer.parseInt(str[4]),Integer.parseInt(str[5]),Integer.parseInt(str[6]),node);
+                if(str[7].toLowerCase().replace(" ","").equals("true"))
+                    cycle = true;
+                transM(Integer.parseInt(str[3]),Integer.parseInt(str[4]),Integer.parseInt(str[5]),Integer.parseInt(str[6]),node,cycle);
             } catch (NumberFormatException e) {
                 Main.textfieldB.setText("Not A Command");
                 return false;
@@ -580,6 +575,157 @@ public class Funct {
             return true;
         }
     };//function
+
+    static Function<String[], Boolean> transitionStop = (String[] str) ->{
+        if(!(str.length == 2)) {
+            Main.textfieldB.setText("Not A Command");
+            return false;
+        }
+        int i = Integer.parseInt(str[1]);
+        if(arrTrans.size()<(i+1)){
+            Main.textfieldB.setText("Node not in Transition List");
+            return false;
+        }
+        else{
+            try {
+                transStopM(i);
+            }
+            catch (Exception e) {
+                Main.textfieldB.setText("Something went wrong inside of Transition call");
+                return false;
+            }
+            return true;
+        }
+    };//function
+
+    static ArrayList<TranslateTransition> arrTransStop = new ArrayList<>();
+    static int transStopCount = 0;
+    static List transStopList = new ArrayList();
+
+    static void transStopM(int i){
+        try{
+            arrTrans.get(i).stop();
+            arrTransStop.add(arrTrans.get(i));
+            arrString.add("transitionStop_"+transStopCount);
+            GenText("TransitionStop_"+transStopCount,objectx,objecty+25+strCount*20);
+            transStopList.add("TransitionStop_"+transStopCount);
+            transStopList.add(strCount);
+            transStopList.add(objecty+25+strCount*20);
+            ++transStopCount;
+            ++strCount;
+        }
+        catch(Exception e){
+            Main.textfieldB.setText("Something went wrong inside of Transition call");
+        }
+    }//method
+
+    static ArrayList<Text> arrTextDisplay = new ArrayList<>();
+    static int textDisplayCount = 0;
+    static List textDisplayList = new ArrayList();
+
+    static void textM(String str, int x , int y, String type, int size){
+        arrTextDisplay.add(new Text());
+        arrTextDisplay.get(textDisplayCount).setText(str);
+        arrTextDisplay.get(textDisplayCount).setLayoutX(x);
+        arrTextDisplay.get(textDisplayCount).setLayoutY(y);
+        arrTextDisplay.get(textDisplayCount).setFont(Font.font(type,size));
+        arrTextDisplay.get(textDisplayCount).setFill(Color.BLACK);
+        Main.group2.getChildren().add(arrTextDisplay.get(textDisplayCount));
+        arrString.add("textDisplay_"+textDisplayCount);
+        GenText("TextDisplay_"+textDisplayCount+"( "+x+" ,"+y+" )",objectx,objecty+25+strCount*20);
+        textDisplayList.add("TestDisplay_"+textDisplayCount);
+        textDisplayList.add(strCount);
+        textDisplayList.add(objecty+25+strCount*20);
+        ++textDisplayCount;
+        ++strCount;
+    }//method
+
+    static Function<String[], Boolean> textdisplay = (String[] str) ->{
+        if(!(str.length == 6)) {
+            Main.textfieldB.setText("Not A Command");
+            return false;
+        }
+        int i = Integer.parseInt(str[5]);
+        int x = Integer.parseInt(str[2]);
+        int y = Integer.parseInt(str[3]);
+            try {
+                textM(str[1],x,y,str[4],i);
+            }
+            catch (Exception e) {
+                Main.textfieldB.setText("Something went wrong inside of Text call");
+                return false;
+            }
+            return true;
+        };//function
+
+    static ArrayList<Rotate> arrRotate = new ArrayList<>();
+    static int rotateCount = 0;
+    static List rotateList = new ArrayList();
+
+    static void rotateM(int angle, int x, int y, int z, String axis, String name, int pos){
+        arrRotate.add(new Rotate());
+        arrRotate.get(rotateCount).setAngle(angle);
+        arrRotate.get(rotateCount).setPivotX(x);
+        arrRotate.get(rotateCount).setPivotY(y);
+        arrRotate.get(rotateCount).setPivotZ(z);
+        if(axis.equals("x"))
+            arrRotate.get(rotateCount).setAxis(Rotate.X_AXIS);
+        else if(axis.equals("y"))
+            arrRotate.get(rotateCount).setAxis(Rotate.Y_AXIS);
+        else
+            arrRotate.get(rotateCount).setAxis(Rotate.Z_AXIS);
+        if(arrNodes.contains(name)) {
+            try {
+                int i = arrNodes.indexOf(name);
+                List nodes = (ArrayList) arrNodes.get(i + 1);
+                Node node = (Node) nodes.get(pos);
+                node.getTransforms().add(arrRotate.get(rotateCount));
+                rotateB(name, pos, angle, axis);
+            }catch(Exception e){
+                Main.textfieldB.setText("Error in rotate call");
+            }
+        }
+        else
+            Main.textfieldB.setText("Not A Command");
+    }//method
+
+    static void rotateB(String name, int pos, int angle, String axis) {
+        arrString.add("rotate_" + rotateCount);
+        GenText("Rotate" + rotateCount + " " + name + "_" + pos+" angle "+angle+" axis "+axis, objectx, objecty + 25 + strCount * 20);
+        rotateList.add("Rotation_" + rotateCount);
+        rotateList.add(strCount);
+        rotateList.add(objecty + 25 + strCount * 20);
+        ++rotateCount;
+        ++rotateCount;
+    }
+
+    static Function<String[], Boolean> rotate = (String[] str) ->{
+        if(!(str.length == 8)) {
+            Main.textfieldB.setText("Not A Command");
+            return false;
+        }
+        else{
+            try {
+                int angle = Integer.parseInt(str[1]);
+                int x = Integer.parseInt(str[2]);
+                int y = Integer.parseInt(str[3]);
+                int z = Integer.parseInt(str[4]);
+                String axis = str[5].replace(" ","").toLowerCase();
+                String name = str[6].replace(" ","").toLowerCase();
+                int pos = Integer.parseInt(str[7]);
+                rotateM(angle,x,y,z,axis,name,pos);
+            } catch (NumberFormatException e) {
+                Main.textfieldB.setText("Not A Command");
+                return false;
+            }
+            catch (Exception e) {
+                Main.textfieldB.setText("Something went wrong inside of Rotation call");
+                return false;
+            }
+            return true;
+        }
+    };//function
+
 
 
 

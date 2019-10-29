@@ -171,8 +171,23 @@ public class Main extends Application {
      */
 
     public static void main(String[] args) {
-        Funct.makeRunAll();
-        launch(args);
+        Runnable r1 = () -> {
+            Funct.makeRunAll();
+            System.out.println("Total memory available to java in mb");
+            System.out.println(Runtime.getRuntime().totalMemory() / Math.pow(10, 6));
+            System.out.println("Program memory usage in mb");
+            System.out.println((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Math.pow(10, 6));
+            System.out.println("Max memory available to java in gb");
+            System.out.println(Runtime.getRuntime().maxMemory()/ Math.pow(10, 9));
+        };
+        Runnable r2 = () -> launch(args);
+
+        Thread t1 = new Thread(r1);
+        Thread t2 = new Thread(r2);
+
+        t1.start();
+        t2.start();
+
     }//main
 }//class
 
