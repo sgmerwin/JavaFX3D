@@ -2,8 +2,10 @@ package sample;
 
 import javafx.animation.Animation;
 import javafx.animation.TranslateTransition;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.text.Font;
@@ -12,6 +14,9 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
 import javafx.util.Duration;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -680,7 +685,13 @@ public class Funct {
                 List nodes = (ArrayList) arrNodes.get(i + 1);
                 Node node = (Node) nodes.get(pos);
                 node.getTransforms().add(arrRotate.get(rotateCount));
-                rotateB(name, pos, angle, axis);
+                arrString.add("rotate_" + rotateCount);
+                GenText("Rotate" + rotateCount + " " + name + "_" + pos+" angle "+angle+" axis "+axis, objectx, objecty + 25 + strCount * 20);
+                rotateList.add("Rotate_" + rotateCount);
+                rotateList.add(strCount);
+                rotateList.add(objecty + 25 + strCount * 20);
+                ++rotateCount;
+                ++strCount;
             }catch(Exception e){
                 Main.textfieldB.setText("Error in rotate call");
             }
@@ -688,16 +699,6 @@ public class Funct {
         else
             Main.textfieldB.setText("Not A Command");
     }//method
-
-    static void rotateB(String name, int pos, int angle, String axis) {
-        arrString.add("rotate_" + rotateCount);
-        GenText("Rotate" + rotateCount + " " + name + "_" + pos+" angle "+angle+" axis "+axis, objectx, objecty + 25 + strCount * 20);
-        rotateList.add("Rotation_" + rotateCount);
-        rotateList.add(strCount);
-        rotateList.add(objecty + 25 + strCount * 20);
-        ++rotateCount;
-        ++rotateCount;
-    }
 
     static Function<String[], Boolean> rotate = (String[] str) ->{
         if(!(str.length == 8)) {
@@ -725,6 +726,33 @@ public class Funct {
             return true;
         }
     };//function
+
+    static ArrayList<FXMLLoader> arrFMXLLoader = new ArrayList<>();
+    static int FXMLLoaderCount = 0;
+    static List FXMLLoaderList = new ArrayList();
+    static ArrayList<Parent> arrParent = new ArrayList<>();
+    static int parentCount = 0;
+    static List parentList = new ArrayList();
+
+    static void fxmlLoader(String file) {
+
+        try {
+            arrFMXLLoader.add(new FXMLLoader());
+            arrParent.add(arrFMXLLoader.get(FXMLLoaderCount).load(Funct.class.getResource(file)));
+            Main.group2.getChildren().add(arrParent.get(parentCount));
+            arrString.add("FXMLLoader_"+FXMLLoaderCount);
+            GenText("FXMLLoader_"+FXMLLoaderCount+" "+file+" ",objectx,objecty+25+strCount*20);
+            FXMLLoaderList.add("FXMLloader_"+FXMLLoaderCount);
+            FXMLLoaderList.add(strCount);
+            FXMLLoaderList.add(objecty+25+strCount*20);
+            ++FXMLLoaderCount;
+            ++strCount;
+            parentList.add("FXMLLoader_"+FXMLLoaderCount);
+            ++parentCount;
+        } catch (IOException e) {
+            Main.textfieldB.setText("FXML did not load");
+        }
+    }//method
 
 
 

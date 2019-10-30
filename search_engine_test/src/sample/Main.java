@@ -106,6 +106,8 @@ public class Main extends Application {
         group2.translateZProperty().set(0);
         initMouseControl(group2, scene, stage);
 
+        Funct.fxmlLoader("test.fxml");
+
         scene.setFill(Color.WHITE);
         scene.setCamera(camera);
         stage.setScene(scene);
