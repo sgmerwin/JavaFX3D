@@ -1,39 +1,24 @@
 package sample;
 
+import arduino.Arduino;
+import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
 import javafx.application.Application;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.HPos;
-import javafx.geometry.Insets;
-import javafx.geometry.Point3D;
-import javafx.geometry.Pos;
 import javafx.scene.*;
-import javafx.scene.control.*;
-import javafx.scene.effect.ColorInput;
-import javafx.scene.image.Image;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import javafx.scene.shape.Box;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Transform;
 import javafx.stage.Stage;
-import org.w3c.dom.ls.LSOutput;
 
-import javax.swing.*;
-import java.awt.geom.Line2D;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URL;
+
 
 /**
  * This was built in IntellJ
@@ -55,6 +40,7 @@ public class Main extends Application {
 
     public static Group group = new Group();
     public static Group group2 = new Group();
+    public static Group group3 = new Group();
     Camera camera = new PerspectiveCamera();
     Double anchorX, anchorY;
     Double anchorAngleX = 0.0;
@@ -62,13 +48,60 @@ public class Main extends Application {
     final DoubleProperty angleX = new SimpleDoubleProperty(0);
     final DoubleProperty angleY = new SimpleDoubleProperty(0);
 
+    private Group loadModel(URL url) {
+        Group modelRoot = new Group();
+
+        ObjModelImporter importer = new ObjModelImporter();
+        importer.read(url);
+
+        for (MeshView view : importer.getImport()) {
+            modelRoot.getChildren().add(view);
+        }
+
+        return modelRoot;
+    }
+
     public void start(Stage stage){
         stage.setTitle("JavaFX Commands");
         group.getChildren().add(group2);
         group2.setLayoutX(700);
         group2.setLayoutY(300);
+        group3.setLayoutX(0);
+        group3.setLayoutY(0);
+        group2.getChildren().add(group3);
+       /* IcosahedronMesh ico = new IcosahedronMesh(5f,1);
+        ico.setTextureModeVertices3D(1600,p->(double)p.x*p.y*p.z);
+        ico.setScaleX(100);
+        ico.setScaleY(100);
+        ico.setScaleZ(100);
+        group2.getChildren().add(ico);*/
 
-        Scene scene = new Scene(group, Width, Height);
+        /*try {
+            ObjModelImporter importer = new ObjModelImporter();
+            File file = new File("/Users/steve/Documents/javafx/search_engine_test/src/sample/Scooter-obj 2/Scooter-smgrps.obj");
+            importer.read(file);
+            for (MeshView view : importer.getImport()) {
+                view.setScaleX(200);
+                view.setScaleY(200);
+                view.setScaleZ(200);
+                group2.getChildren().add(view);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
+
+        /*try {
+            File file = new File("/Users/steve/Documents/javafx/search_engine_test/src/sample/circuit_2.jpg");
+            FileInputStream inputStream = new FileInputStream(file);
+            Image image = new Image(inputStream);
+            ImageView imageView = new ImageView(image);
+            group2.getChildren().add(imageView);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }*/
+
+        //The true is enabling a depth buffer?
+        Scene scene = new Scene(group, Width, Height,true,SceneAntialiasing.BALANCED);
 
         GroupGestures groupGestures = new GroupGestures(group2);
         scene.addEventFilter(MouseEvent.MOUSE_PRESSED, groupGestures.getOnMousePressedEventHandler());
@@ -88,8 +121,9 @@ public class Main extends Application {
          * line_0 and line_1 will be the x and y axes.
          */
 
-        Funct.lineM(0,-400,0,400);
-        Funct.lineM(-400,0,400,0);
+        Funct.lineM(0.0,-400.0,0.0,400.0,true);
+        Funct.lineM(-400.0,0.0,400.0,0.0,true);
+
 
         /**
          * These translate Property calls puts the nodes in
@@ -106,9 +140,24 @@ public class Main extends Application {
         group2.translateZProperty().set(0);
         initMouseControl(group2, scene, stage);
 
-        Funct.fxmlLoader("test.fxml");
+       /* SurfacePlotMesh surface = new SurfacePlotMesh(generateFunction(0), a, b, 100, 100, 1);
+        surface.getTransforms().addAll(new Rotate(200, Rotate.X_AXIS),
+                new Rotate(60, Rotate.Y_AXIS));
+        surface.setCullFace(CullFace.NONE);
+        surface.setTextureModePattern(Patterns.CarbonPatterns.LIGHT_CARBON, 1.0d);
+        KeyFrame keyFrame = new KeyFrame(Duration.millis(50), (ActionEvent event) -> {
+            surface.setFunction2D(generateFunction(time));
+            time += 0.005;
+        });
+        Timeline timeLine = new Timeline(keyFrame);
+        timeLine.setCycleCount(Timeline.INDEFINITE);
+        timeLine.play();
+        surface.setScaleX(100);
+        surface.setScaleY(100);
+        surface.setScaleZ(100);
+        group2.getChildren().addAll(surface);*/
 
-        scene.setFill(Color.WHITE);
+        scene.setFill(Color.BISQUE);
         scene.setCamera(camera);
         stage.setScene(scene);
         stage.show();
@@ -127,7 +176,7 @@ public class Main extends Application {
         textfieldA.setText("Enter Command");
         textfieldA.setPrefColumnCount(50);
         textfieldB.setText("Return Method Call");
-        textfieldB.setPrefColumnCount(50);
+        textfieldB.setPrefColumnCount(75);
 
         EventHandler<ActionEvent> eventA = new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event)
@@ -174,6 +223,25 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         Runnable r1 = () -> {
+            Arduino mega = new Arduino();
+
+            mega.setPortDescription("/dev/cu.usbmodem14101");
+            mega.setBaudRate(9600);
+
+            mega.openConnection();
+
+            System.out.println("open connection  " + mega.openConnection());
+            System.out.println("serial port " + mega.getSerialPort());
+
+
+            while (mega.openConnection()) {
+                String i = mega.serialRead(1);
+                System.out.println(i);
+
+            }
+        };
+
+        Runnable r2 = () -> {
             Funct.makeRunAll();
             System.out.println("Total memory available to java in mb");
             System.out.println(Runtime.getRuntime().totalMemory() / Math.pow(10, 6));
@@ -182,13 +250,16 @@ public class Main extends Application {
             System.out.println("Max memory available to java in gb");
             System.out.println(Runtime.getRuntime().maxMemory()/ Math.pow(10, 9));
         };
-        Runnable r2 = () -> launch(args);
 
-        Thread t1 = new Thread(r1);
+        Runnable r3 = () -> launch(args);
+
+        //Thread t1 = new Thread(r1);
         Thread t2 = new Thread(r2);
+        Thread t3 = new Thread(r3);
 
-        t1.start();
+        //t1.start();
         t2.start();
+        t3.start();
 
     }//main
 }//class

@@ -6,4 +6,19 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<Label text = "Hello"/>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.Cursor?>
+
+<?import javafx.scene.chart.NumberAxis?>
+
+<LineChart prefHeight="1000.0" prefWidth="1000.0">
+
+<xAxis>
+<NumberAxis autoRanging="false" lowerBound="-10" side="BOTTOM" tickUnit="1" upperBound="10" />
+</xAxis>
+<yAxis>
+<NumberAxis autoRanging="false" lowerBound="-10" side="LEFT" tickUnit="1" upperBound="10" />
+</yAxis>
+
+</LineChart>
+
