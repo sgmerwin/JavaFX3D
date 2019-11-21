@@ -1811,7 +1811,7 @@ public class Funct {
             return true;
         }
     };//function
-    
+
     static ArrayList<Image> jpgimagearr = new ArrayList<>();
     static ArrayList<FileInputStream> jpginputstream = new ArrayList<>();
     static ArrayList<ImageView> jpgimageview = new ArrayList<>();

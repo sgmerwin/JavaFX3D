@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="search_engine_test" default="all">
+  
+  
+  <property file="search_engine_test.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*.yarb/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.egg"/>
+    <include name="*.jar"/>
+    <include name="*.ear"/>
+    <include name="*.klib"/>
+    <include name="*.swc"/>
+    <include name="*.war"/>
+    <include name="*.zip"/>
+    <include name="*.ane"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.13" value="${jdk.home.13}/bin"/>
+  <path id="jdk.classpath.13">
+    <fileset dir="${jdk.home.13}">
+      <include name="../Home!/java.base"/>
+      <include name="../Home!/java.compiler"/>
+      <include name="../Home!/java.datatransfer"/>
+      <include name="../Home!/java.desktop"/>
+      <include name="../Home!/java.instrument"/>
+      <include name="../Home!/java.logging"/>
+      <include name="../Home!/java.management"/>
+      <include name="../Home!/java.management.rmi"/>
+      <include name="../Home!/java.naming"/>
+      <include name="../Home!/java.net.http"/>
+      <include name="../Home!/java.prefs"/>
+      <include name="../Home!/java.rmi"/>
+      <include name="../Home!/java.scripting"/>
+      <include name="../Home!/java.se"/>
+      <include name="../Home!/java.security.jgss"/>
+      <include name="../Home!/java.security.sasl"/>
+      <include name="../Home!/java.smartcardio"/>
+      <include name="../Home!/java.sql"/>
+      <include name="../Home!/java.sql.rowset"/>
+      <include name="../Home!/java.transaction.xa"/>
+      <include name="../Home!/java.xml"/>
+      <include name="../Home!/java.xml.crypto"/>
+      <include name="../Home!/jdk.accessibility"/>
+      <include name="../Home!/jdk.aot"/>
+      <include name="../Home!/jdk.attach"/>
+      <include name="../Home!/jdk.charsets"/>
+      <include name="../Home!/jdk.compiler"/>
+      <include name="../Home!/jdk.crypto.cryptoki"/>
+      <include name="../Home!/jdk.crypto.ec"/>
+      <include name="../Home!/jdk.dynalink"/>
+      <include name="../Home!/jdk.editpad"/>
+      <include name="../Home!/jdk.hotspot.agent"/>
+      <include name="../Home!/jdk.httpserver"/>
+      <include name="../Home!/jdk.internal.ed"/>
+      <include name="../Home!/jdk.internal.jvmstat"/>
+      <include name="../Home!/jdk.internal.le"/>
+      <include name="../Home!/jdk.internal.opt"/>
+      <include name="../Home!/jdk.internal.vm.ci"/>
+      <include name="../Home!/jdk.internal.vm.compiler"/>
+      <include name="../Home!/jdk.internal.vm.compiler.management"/>
+      <include name="../Home!/jdk.jartool"/>
+      <include name="../Home!/jdk.javadoc"/>
+      <include name="../Home!/jdk.jcmd"/>
+      <include name="../Home!/jdk.jconsole"/>
+      <include name="../Home!/jdk.jdeps"/>
+      <include name="../Home!/jdk.jdi"/>
+      <include name="../Home!/jdk.jdwp.agent"/>
+      <include name="../Home!/jdk.jfr"/>
+      <include name="../Home!/jdk.jlink"/>
+      <include name="../Home!/jdk.jshell"/>
+      <include name="../Home!/jdk.jsobject"/>
+      <include name="../Home!/jdk.jstatd"/>
+      <include name="../Home!/jdk.localedata"/>
+      <include name="../Home!/jdk.management"/>
+      <include name="../Home!/jdk.management.agent"/>
+      <include name="../Home!/jdk.management.jfr"/>
+      <include name="../Home!/jdk.naming.dns"/>
+      <include name="../Home!/jdk.naming.rmi"/>
+      <include name="../Home!/jdk.net"/>
+      <include name="../Home!/jdk.pack"/>
+      <include name="../Home!/jdk.rmic"/>
+      <include name="../Home!/jdk.scripting.nashorn"/>
+      <include name="../Home!/jdk.scripting.nashorn.shell"/>
+      <include name="../Home!/jdk.sctp"/>
+      <include name="../Home!/jdk.security.auth"/>
+      <include name="../Home!/jdk.security.jgss"/>
+      <include name="../Home!/jdk.unsupported"/>
+      <include name="../Home!/jdk.unsupported.desktop"/>
+      <include name="../Home!/jdk.xml.dom"/>
+      <include name="../Home!/jdk.zipfs"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.13}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.13}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.13"/>
+  
+  
+  <!-- Project Libraries -->
+  
+  <path id="library.lib.classpath">
+    <fileset dir="${basedir}/../javafx-sdk-13/lib">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  <!-- Register Custom Compiler Taskdefs -->
+  <property name="javac2.home" value="${idea.home}/lib"/>
+  <path id="javac2.classpath">
+    <fileset dir="${javac2.home}">
+      <include name="javac2.jar"/>
+      <include name="jdom.jar"/>
+      <include name="asm-all*.jar"/>
+      <include name="forms-*.jar"/>
+    </fileset>
+  </path>
+  <target name="register.custom.compilers">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+  </target>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module legal -->
+  
+  <dirname property="module.legal.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.legal" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.legal" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.legal" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.legal" value="-encoding UTF-8 -source 13 -target 13 ${compiler.args}"/>
+  
+  <property name="legal.output.dir" value="${module.legal.basedir}/out/production/legal"/>
+  <property name="legal.testoutput.dir" value="${module.legal.basedir}/out/test/legal"/>
+  
+  <path id="legal.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="legal.module.production.classpath">
+    <path refid="${module.jdk.classpath.legal}"/>
+  </path>
+  
+  <path id="legal.runtime.production.module.classpath">
+    <pathelement location="${legal.output.dir}"/>
+  </path>
+  
+  <path id="legal.module.classpath">
+    <path refid="${module.jdk.classpath.legal}"/>
+    <pathelement location="${legal.output.dir}"/>
+  </path>
+  
+  <path id="legal.runtime.module.classpath">
+    <pathelement location="${legal.testoutput.dir}"/>
+    <pathelement location="${legal.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.legal">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.legal">
+    <patternset refid="excluded.from.module.legal"/>
+  </patternset>
+  
+  
+  <target name="compile.module.legal" depends="compile.module.legal.production,compile.module.legal.tests" description="Compile module legal"/>
+  
+  <target name="compile.module.legal.production" depends="register.custom.compilers" description="Compile module legal; production classes"/>
+  
+  <target name="compile.module.legal.tests" depends="register.custom.compilers,compile.module.legal.production" description="compile module legal; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.legal" description="cleanup module">
+    <delete dir="${legal.output.dir}"/>
+    <delete dir="${legal.testoutput.dir}"/>
+  </target>
+  
+  
+  <!-- Module search_engine_test -->
+  
+  <dirname property="module.search_engine_test.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.search_engine_test" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.search_engine_test" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.search_engine_test" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.search_engine_test" value="-encoding UTF-8 -source 13 -target 13 ${compiler.args}"/>
+  
+  <property name="search_engine_test.output.dir" value="${module.search_engine_test.basedir}/out/production/search_engine_test"/>
+  <property name="search_engine_test.testoutput.dir" value="${module.search_engine_test.basedir}/out/test/search_engine_test"/>
+  
+  <path id="search_engine_test.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="search_engine_test.module.production.classpath">
+    <path refid="${module.jdk.classpath.search_engine_test}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  <path id="search_engine_test.runtime.production.module.classpath">
+    <pathelement location="${search_engine_test.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  <path id="search_engine_test.module.classpath">
+    <path refid="${module.jdk.classpath.search_engine_test}"/>
+    <pathelement location="${search_engine_test.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  <path id="search_engine_test.runtime.module.classpath">
+    <pathelement location="${search_engine_test.testoutput.dir}"/>
+    <pathelement location="${search_engine_test.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.search_engine_test">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.search_engine_test">
+    <patternset refid="excluded.from.module.search_engine_test"/>
+  </patternset>
+  
+  <path id="search_engine_test.module.sourcepath">
+    <dirset dir="${module.search_engine_test.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.search_engine_test" depends="compile.module.search_engine_test.production,compile.module.search_engine_test.tests" description="Compile module search_engine_test"/>
+  
+  <target name="compile.module.search_engine_test.production" depends="register.custom.compilers" description="Compile module search_engine_test; production classes">
+    <mkdir dir="${search_engine_test.output.dir}"/>
+    <javac2 destdir="${search_engine_test.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.search_engine_test}/javac">
+      <compilerarg line="${compiler.args.search_engine_test}"/>
+      <bootclasspath refid="search_engine_test.module.bootclasspath"/>
+      <classpath refid="search_engine_test.module.production.classpath"/>
+      <src refid="search_engine_test.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.search_engine_test"/>
+    </javac2>
+    
+    <copy todir="${search_engine_test.output.dir}">
+      <fileset dir="${module.search_engine_test.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.search_engine_test.tests" depends="register.custom.compilers,compile.module.search_engine_test.production" description="compile module search_engine_test; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.search_engine_test" description="cleanup module">
+    <delete dir="${search_engine_test.output.dir}"/>
+    <delete dir="${search_engine_test.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.legal, clean.module.search_engine_test, clean.artifact.search_engine_test:jar" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.legal, compile.module.search_engine_test" description="build all modules"/>
+  
+  <target name="init.artifacts">
+    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+    <property name="artifact.output.search_engine_test:jar" value="${basedir}/../../../Downloads"/>
+    <mkdir dir="${artifacts.temp.dir}"/>
+    <property name="artifact.temp.output." value="${artifacts.temp.dir}/"/>
+    <taskdef resource="com/sun/javafx/tools/ant/antlib.xml" uri="javafx:com.sun.javafx.tools.ant" classpath="${jdk.home.13}/lib/ant-javafx.jar"/>
+  </target>
+  
+  <target name="clean.artifact.search_engine_test:jar" description="clean search_engine_test:jar artifact output">
+    <delete dir="${artifact.output.search_engine_test:jar}"/>
+  </target>
+  
+  <target name="artifact.search_engine_test:jar" depends="init.artifacts, compile.module.search_engine_test" description="Build &#39;search_engine_test:jar&#39; artifact" xmlns:fx="javafx:com.sun.javafx.tools.ant">
+    <mkdir dir="${artifact.output.search_engine_test:jar}"/>
+    <copy todir="${artifact.temp.output.}">
+      <fileset dir="${search_engine_test.output.dir}"/>
+    </copy>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/src.zip" dest="${artifact.temp.output.}"/>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/arduino.jar" dest="${artifact.temp.output.}"/>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/javafx-swt.jar" dest="${artifact.temp.output.}"/>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/javafx.web.jar" dest="${artifact.temp.output.}"/>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/javafx.base.jar" dest="${artifact.temp.output.}"/>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/javafx.fxml.jar" dest="${artifact.temp.output.}"/>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/fxyz3d-0.5.2.jar" dest="${artifact.temp.output.}"/>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/javafx.media.jar" dest="${artifact.temp.output.}"/>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/javafx.swing.jar" dest="${artifact.temp.output.}"/>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/javafx.controls.jar" dest="${artifact.temp.output.}"/>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/javafx.graphics.jar" dest="${artifact.temp.output.}"/>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/jSerialComm-2.5.2.jar" dest="${artifact.temp.output.}"/>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/jfxtras-common-0.6.jar" dest="${artifact.temp.output.}"/>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/fxyz3d-client-0.5.2.jar" dest="${artifact.temp.output.}"/>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/jfxtras-controls-0.6.jar" dest="${artifact.temp.output.}"/>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/jimStlMeshImporterJFX.jar" dest="${artifact.temp.output.}"/>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/fxyz3d-importers-0.5.2.jar" dest="${artifact.temp.output.}"/>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/jim3dsModelImporterJFX.jar" dest="${artifact.temp.output.}"/>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/jimColModelImporterJFX.jar" dest="${artifact.temp.output.}"/>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/jimObjModelImporterJFX.jar" dest="${artifact.temp.output.}"/>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/jimX3dModelImporterJFX.jar" dest="${artifact.temp.output.}"/>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/jimFxmlModelImporterJFX.jar" dest="${artifact.temp.output.}"/>
+    <unzip src="${basedir}/../javafx-sdk-13/lib/jfxtras-labs-2.2-r5-sources.jar" dest="${artifact.temp.output.}"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/src.zip" tofile="${artifact.temp.output.}/src.zip"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/arduino.jar" tofile="${artifact.temp.output.}/arduino.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/ant-javafx.jar" tofile="${artifact.temp.output.}/ant-javafx.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/javafx-swt.jar" tofile="${artifact.temp.output.}/javafx-swt.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/javafx.web.jar" tofile="${artifact.temp.output.}/javafx.web.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/javafx.base.jar" tofile="${artifact.temp.output.}/javafx.base.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/javafx.fxml.jar" tofile="${artifact.temp.output.}/javafx.fxml.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/fxyz3d-0.5.2.jar" tofile="${artifact.temp.output.}/fxyz3d-0.5.2.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/javafx.media.jar" tofile="${artifact.temp.output.}/javafx.media.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/javafx.swing.jar" tofile="${artifact.temp.output.}/javafx.swing.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/JavaFxPackager.jar" tofile="${artifact.temp.output.}/JavaFxPackager.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/javafx.controls.jar" tofile="${artifact.temp.output.}/javafx.controls.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/javafx.graphics.jar" tofile="${artifact.temp.output.}/javafx.graphics.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/jSerialComm-2.5.2.jar" tofile="${artifact.temp.output.}/jSerialComm-2.5.2.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/jfxtras-common-0.6.jar" tofile="${artifact.temp.output.}/jfxtras-common-0.6.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/fxyz3d-client-0.5.2.jar" tofile="${artifact.temp.output.}/fxyz3d-client-0.5.2.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/jfxtras-controls-0.6.jar" tofile="${artifact.temp.output.}/jfxtras-controls-0.6.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/jimStlMeshImporterJFX.jar" tofile="${artifact.temp.output.}/jimStlMeshImporterJFX.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/fxyz3d-importers-0.5.2.jar" tofile="${artifact.temp.output.}/fxyz3d-importers-0.5.2.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/jim3dsModelImporterJFX.jar" tofile="${artifact.temp.output.}/jim3dsModelImporterJFX.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/jimColModelImporterJFX.jar" tofile="${artifact.temp.output.}/jimColModelImporterJFX.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/jimObjModelImporterJFX.jar" tofile="${artifact.temp.output.}/jimObjModelImporterJFX.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/jimX3dModelImporterJFX.jar" tofile="${artifact.temp.output.}/jimX3dModelImporterJFX.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/jimFxmlModelImporterJFX.jar" tofile="${artifact.temp.output.}/jimFxmlModelImporterJFX.jar"/>
+    <copy file="${basedir}/../javafx-sdk-13/lib/jfxtras-labs-2.2-r5-sources.jar" tofile="${artifact.temp.output.}/jfxtras-labs-2.2-r5-sources.jar"/>
+    <fx:fileset id="all_but_" dir="${artifact.temp.output.}" includes="**/*.jar">
+      <exclude name=""/>
+    </fx:fileset>
+    <fx:fileset id="all_" dir="${artifact.temp.output.}" includes="**/*.jar"/>
+    <fx:application id="_id" name="search_engine_test:jar" mainClass="sample.Main"/>
+    <fx:jar destfile="${artifact.temp.output.}/">
+      <fx:application refid="_id"/>
+      <fileset dir="${artifact.temp.output.}" excludes="**/*.jar"/>
+      <fx:resources>
+        <fx:fileset refid="all_but_"/>
+      </fx:resources>
+      <manifest>
+        <attribute name="Implementation-Title" value="CADcommands"/>
+        <attribute name="Implementation-Version" value=""/>
+        <attribute name="Implementation-Vendor" value=""/>
+      </manifest>
+    </fx:jar>
+    <fx:deploy width="600" height="400" updatemode="background" outdir="${artifact.temp.output.}/deploy" outfile="">
+      <fx:application refid="_id"/>
+      <fx:info title="CADcommands"/>
+      <fx:resources>
+        <fx:fileset refid="all_"/>
+      </fx:resources>
+    </fx:deploy>
+    <copy todir="${artifact.output.search_engine_test:jar}">
+      <fileset dir="${artifact.temp.output.}/deploy"/>
+    </copy>
+    <delete includeemptydirs="true">
+      <fileset dir="${artifact.temp.output.}"/>
+    </delete>
+  </target>
+  
+  <target name="build.all.artifacts" depends="artifact.search_engine_test:jar" description="Build all artifacts">
+    
+    <!-- Delete temporary files -->
+    <delete dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
+</project>

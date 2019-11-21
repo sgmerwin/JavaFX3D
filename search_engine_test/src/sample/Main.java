@@ -1,7 +1,6 @@
 package sample;
 
 import arduino.Arduino;
-import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
 import javafx.application.Application;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -13,19 +12,15 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
-
-import java.net.URL;
-
 
 /**
  * This was built in IntellJ
  * JavaFX sdk 13 was added to the compiler and to the VM.
  */
 
-public class Main extends Application {
+public class Main extends Application{
 
     public static final double Width = 500;
     public static final double Height = 500;
@@ -47,19 +42,6 @@ public class Main extends Application {
     Double anchorAngleY = 0.0;
     final DoubleProperty angleX = new SimpleDoubleProperty(0);
     final DoubleProperty angleY = new SimpleDoubleProperty(0);
-
-    private Group loadModel(URL url) {
-        Group modelRoot = new Group();
-
-        ObjModelImporter importer = new ObjModelImporter();
-        importer.read(url);
-
-        for (MeshView view : importer.getImport()) {
-            modelRoot.getChildren().add(view);
-        }
-
-        return modelRoot;
-    }
 
     public void start(Stage stage){
         stage.setTitle("JavaFX Commands");
